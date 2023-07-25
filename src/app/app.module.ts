@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
 import config  from 'src/config';
+import { AuthModule } from 'src/auth/auth.module';
 
 
 @Module({
@@ -20,7 +21,10 @@ import config  from 'src/config';
   }), ConfigModule.forRoot({
     isGlobal: true,
     load: [config]
-  }), UsersModule],
+  }), 
+    UsersModule, 
+    AuthModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,9 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './users.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDTO } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt'
+import { ErrorsList } from 'src/common/constants/errors';
 
 @Injectable()
 export class UsersService {
@@ -13,30 +14,25 @@ export class UsersService {
         private userRepository: Repository<UserEntity> 
     ){}
 
-    getUsers(){
-        return 'qweffffffffffffffffffff'
+    async getAllUsers(){
+        return await this.userRepository.find();
     }
 
     async hashPassword(password: string): Promise<string>{
         return bcrypt.hash(password, 10)
     }
 
-    async findUser({email, login}): Promise<CreateUserDTO[]> {
-        return await this.userRepository.find({where: [{email}, {login}]})
+    async findUserByEmail({email}): Promise<CreateUserDTO> {
+
+        return await this.userRepository.findOne({where: {email: email}})
     }
 
-    async createUser(user: CreateUserDTO): Promise<CreateUserDTO | object> {
+    async createUser(user: CreateUserDTO): Promise<CreateUserDTO> {
 
-        const users: CreateUserDTO []= await this.findUser({email: user.email, login: user.login});
-
-
-        if(users?.length) return {
-            statusCode: 200,
-            message:  'такой пользователь уже существует'
-        } 
-       
-
+ 
         user.password = await this.hashPassword(user.password)
+
+
         return await this.userRepository.save(user);
     }
 }

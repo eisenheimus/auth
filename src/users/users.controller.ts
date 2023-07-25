@@ -9,9 +9,9 @@ constructor(
     private readonly usersService: UsersService
 ){}
 
-    @Get()
-    getUsers() {
-        return this.usersService.getUsers()
+    @Get('get-all')
+    getAllUsers() {
+        return this.usersService.getAllUsers()
 
     }
 
